@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_transaksi')->unique();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('customer_name')->nullable();
+            $table->dateTime('tanggal');
+            $table->unsignedBigInteger('subtotal')->default(0);
+            $table->unsignedBigInteger('diskon')->default(0);
+            $table->unsignedBigInteger('pajak')->default(0);
+            $table->unsignedBigInteger('grand_total')->default(0);
+            $table->enum('status', ['pending', 'paid', 'cancel'])->default('paid');
             $table->timestamps();
+
         });
     }
 

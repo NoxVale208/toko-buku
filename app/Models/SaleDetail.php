@@ -4,7 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class SaleDetail extends Model
 {
-    //
+
+    protected $fillable = [
+
+        'sale_id',
+        'book_id',
+
+        'qty',
+
+        'harga',
+
+        'subtotal'
+
+    ];
+
+
+
+    public function sale()
+    {
+        return $this->belongsTo(
+            Sale::class
+        );
+    }
+
+
+
+    public function book()
+    {
+        return $this->belongsTo(
+            Book::class
+        );
+    }
+
 }

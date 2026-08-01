@@ -11,23 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock_ins', function(Blueprint $table){
+        Schema::create('publishers', function (Blueprint $table) {
 
     $table->id();
-
-
-    $table->foreignId('distributor_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-
-    $table->date('tanggal');
-
-
-    $table->integer('total_harga')
-        ->default(0);
-
-
+    $table->string('nama');
     $table->timestamps();
 
 });
@@ -38,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_ins');
+        Schema::dropIfExists('publishers');
     }
 };

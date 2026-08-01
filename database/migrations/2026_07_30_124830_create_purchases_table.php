@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_pembelian')->unique();
+            $table->foreignId('distributor_id')->constrained()->cascadeOnDelete();
+            $table->date('tanggal');
+            $table->unsignedBigInteger('subtotal')->default(0);
+            $table->unsignedBigInteger('diskon')->default(0);
+            $table->unsignedBigInteger('pajak')->default(0);
+            $table->unsignedBigInteger('grand_total')->default(0);
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

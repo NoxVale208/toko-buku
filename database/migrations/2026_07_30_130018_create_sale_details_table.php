@@ -11,33 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sale_details', function(Blueprint $table){
-
-    $table->id();
-
-
-    $table->foreignId('sale_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-
-    $table->foreignId('book_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-
-    $table->integer('jumlah');
-
-
-    $table->integer('harga');
-
-
-    $table->integer('subtotal');
-
-
-    $table->timestamps();
-
-});
+        Schema::create('sale_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+            $table->unsignedInteger('qty');
+            $table->unsignedBigInteger('harga');
+            $table->unsignedBigInteger('subtotal');
+            $table->timestamps();
+        });
     }
 
     /**

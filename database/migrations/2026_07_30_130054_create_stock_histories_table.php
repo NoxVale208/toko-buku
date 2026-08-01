@@ -11,32 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock_histories', function(Blueprint $table){
-
-    $table->id();
-
-
-    $table->foreignId('book_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-
-    $table->enum('type',[
-        'in',
-        'out'
-    ]);
-
-
-    $table->integer('jumlah');
-
-
-    $table->string('description')
-        ->nullable();
-
-
-    $table->timestamps();
-
-});
+        Schema::create('stock_histories', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->enum('type', ['in', 'out', 'adjustment']);
+            $table->unsignedInteger('qty');
+            $table->unsignedInteger('stok_sebelum');
+            $table->unsignedInteger('stok_sesudah');
+            $table->string('keterangan')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
