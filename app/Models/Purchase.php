@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Purchase extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'kode_pembelian',
         'distributor_id',
@@ -14,22 +17,20 @@ class Purchase extends Model
         'diskon',
         'pajak',
         'grand_total',
-        'keterangan'
+        'keterangan',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
 
     public function distributor()
     {
-        return $this->belongsTo(
-            Distributor::class
-        );
+        return $this->belongsTo(Distributor::class);
     }
 
-
-    public function details()
+    public function purchaseDetails()
     {
-        return $this->hasMany(
-            PurchaseDetail::class
-        );
+        return $this->hasMany(PurchaseDetail::class);
     }
 }

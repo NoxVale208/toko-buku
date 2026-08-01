@@ -3,15 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Book extends Model
 {
-    use SoftDeletes;
-
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-
         'kode_buku',
         'barcode',
         'category_id',
@@ -25,57 +24,37 @@ class Book extends Model
         'stok',
         'minimal_stok',
         'cover',
-        'deskripsi'
-
+        'deskripsi',
+        'status',
     ];
-
-
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-
     public function author()
     {
         return $this->belongsTo(Author::class);
     }
-
 
     public function publisher()
     {
         return $this->belongsTo(Publisher::class);
     }
 
-
-    public function stockDetails()
+    public function purchaseDetails()
     {
-        return $this->hasMany(
-            StockInDetail::class
-        );
+        return $this->hasMany(PurchaseDetail::class);
     }
-
 
     public function saleDetails()
     {
-        return $this->hasMany(
-            SaleDetail::class
-        );
+        return $this->hasMany(SaleDetail::class);
     }
-
 
     public function stockHistories()
     {
-        return $this->hasMany(
-            StockHistory::class
-        );
-    }
-
-    public function purchaseDetails()
-    {
-        return $this->hasMany(
-            PurchaseDetail::class
-        );
+        return $this->hasMany(StockHistory::class);
     }
 }
