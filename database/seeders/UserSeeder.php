@@ -23,5 +23,12 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'kasir',
         ]);
+
+         User::create([
+            'name' => 'Customer',
+            'email' => 'customer@tokobuku.test',
+            'password' => Hash::make('password'),
+            'role' => 'customer',
+        ]);
     }
 }

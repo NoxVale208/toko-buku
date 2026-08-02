@@ -23,14 +23,12 @@ class AuthController extends Controller
         $user = User::create([
 
             'name'=>$request->name,
-
             'email'=>$request->email,
-
             'password'=>Hash::make(
                 $request->password
             ),
 
-            'role'=>'kasir'
+            'role'=>'customer'
 
         ]);
 
@@ -43,9 +41,7 @@ class AuthController extends Controller
         return response()->json([
 
             'message'=>'Register berhasil',
-
             'user'=>$user,
-
             'token'=>$token
 
         ],201);
@@ -58,9 +54,7 @@ class AuthController extends Controller
     {
 
         $request->validate([
-
             'email'=>'required|email',
-
             'password'=>'required'
 
         ]);
@@ -88,20 +82,14 @@ class AuthController extends Controller
 
         }
 
-
-
-        $token = $user->createToken(
-            'auth_token'
-        )->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
 
 
         return response()->json([
 
             'message'=>'Login berhasil',
-
             'user'=>$user,
-
             'token'=>$token
 
         ]);
