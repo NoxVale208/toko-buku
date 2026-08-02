@@ -2,48 +2,82 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Distributor;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreDistributorRequest;
+use App\Http\Requests\UpdateDistributorRequest;
 
 class DistributorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $distributors = Distributor::when($request->search, function($query) use($request){
+
+            $query->where('nama','like',"%{$request->search}%")
+                  ->orWhere('kode_distributor','like',"%{$request->search}%");
+
+        })
+        ->latest()
+        ->paginate(10);
+
+
+        return response()->json([
+            'success'=>true,
+            'data'=>$distributors
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    public function store(StoreDistributorRequest $request)
     {
-        //
+        $distributor = Distributor::create([
+            'kode_distributor'=>$request->kode_distributor,
+            'nama'=>$request->nama
+        ]);
+
+
+        return response()->json([
+            'success'=>true,
+            'message'=>'Distributor berhasil ditambahkan',
+            'data'=>$distributor
+        ],201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+
+    public function show(Distributor $distributor)
     {
-        //
+        return response()->json([
+            'success'=>true,
+            'data'=>$distributor
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(UpdateDistributorRequest $request, Distributor $distributor)
     {
-        //
+        $distributor->update([
+            'kode_distributor'=>$request->kode_distributor,
+            'nama'=>$request->nama
+        ]);
+
+
+        return response()->json([
+            'success'=>true,
+            'message'=>'Distributor berhasil diperbarui',
+            'data'=>$distributor
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function destroy(Distributor $distributor)
     {
-        //
+        $distributor->delete();
+
+
+        return response()->json([
+            'success'=>true,
+            'message'=>'Distributor berhasil dihapus'
+        ]);
     }
 }

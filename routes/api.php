@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
-
+use App\Http\Controllers\Api\AuthorController;
+use App\Http\Controllers\Api\PublisherController;
+use App\Http\Controllers\Api\DistributorController;
 
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
