@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
+use App\Models\StockHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,11 +72,36 @@ class CheckoutController extends Controller
                     'subtotal'=>$item->qty * $item->harga
                 ]);
 
-                // kurangi stok
-                $item->book->decrement(
-                    'stok',
-                    $item->qty
-                );
+                $stokSebelum = $item->book->stok;
+
+
+$item->book->decrement(
+    'stok',
+    $item->qty
+);
+
+
+$item->book->refresh();
+
+
+StockHistory::create([
+
+    'book_id'=>$item->book_id,
+
+    'user_id'=>auth()->id(),
+
+    'type'=>'out',
+
+    'qty'=>$item->qty,
+
+    'stok_sebelum'=>$stokSebelum,
+
+    'stok_sesudah'=>$item->book->stok,
+
+    'keterangan'=>
+        'Penjualan order '.$order->kode_order
+
+]);
 
             }
 

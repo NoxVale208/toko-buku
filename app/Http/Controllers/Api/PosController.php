@@ -7,6 +7,7 @@ use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Book;
 use App\Models\Payment;
+use App\Models\StockHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -74,10 +75,36 @@ class PosController extends Controller
                 ]);
 
                 // kurangi stok
-                $book->decrement(
-                    'stok',
-                    $item['qty']
-                );
+                $stokSebelum = $book->stok;
+
+
+$book->decrement(
+    'stok',
+    $item['qty']
+);
+
+
+$book->refresh();
+
+
+StockHistory::create([
+
+    'book_id'=>$book->id,
+
+    'user_id'=>auth()->id(),
+
+    'type'=>'out',
+
+    'qty'=>$item['qty'],
+
+    'stok_sebelum'=>$stokSebelum,
+
+    'stok_sesudah'=>$book->stok,
+
+    'keterangan'=>
+        'Penjualan tunai '.$sale->kode_transaksi
+
+]);
             }
 
             // payment tunai

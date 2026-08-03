@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     // PUBLISHER
     Route::get('/publishers',[PublisherController::class,'index']);
     Route::post('/publishers',[PublisherController::class,'store']);
+    Route::post('/books/{book}/publish',[BookController::class,'publish']);
     Route::get('/publishers/{publisher}',[PublisherController::class,'show']);
     Route::put('/publishers/{publisher}',[PublisherController::class,'update']);
     Route::delete('/publishers/{publisher}',[PublisherController::class,'destroy']);
