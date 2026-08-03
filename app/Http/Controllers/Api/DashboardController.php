@@ -2,80 +2,68 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Order;
 use App\Models\Sale;
-use App\Models\Category;
+use App\Models\Payment;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 
 class DashboardController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
 
-        $totalBuku = Book::count();
+        if($user->role === 'admin'){
 
-        $totalKategori = Category::count();
+            return response()->json([
 
-        $totalCustomer = User::where(
-            'role',
-            'customer'
-        )->count();
+                'role'=>'admin',
 
+                'data'=>[
+                    'total_buku'=>Book::count(),
+                    'total_customer'=>User::where('role','customer')->count(),
+                    'stok_menipis'=>Book::whereColumn('stok','<=','minimal_stok')->count(),
 
-        $totalTransaksi = Sale::count();
+                    'total_order'=>Order::count(),
+                    'total_penjualan'=>Sale::count(),
+                    'total_omzet'=>Sale::where('status','paid')->sum( 'grand_total')
 
+                ]
+            ]);
+        }
 
-        $pendapatan = Sale::sum(
-            'grand_total'
-        );
+        if($user->role === 'kasir'){
 
+            return response()->json([
 
-        $stokMenipis = Book::whereColumn(
-            'stok',
-            '<=',
-            'minimal_stok'
-        )
-        ->get();
+                'role'=>'kasir',
+                'data'=>['transaksi_hari_ini'=>Sale::whereDate(
 
+                        'tanggal', today())->count(),
 
+                    'penjualan_hari_ini'=>Sale::whereDate(
+                        'tanggal',today())
+                    ->where(
+                        'status','paid'
+                    )
+                    ->sum(
+                        'grand_total'
+                    ),
 
-        $transaksiTerbaru = Sale::with(
-            'user'
-        )
-        ->latest()
-        ->limit(5)
-        ->get();
-
-
+                    'pembayaran_pending'=>Payment::where('status','pending')->count(),
+                    'total_transaksi'=>Sale::count()
+                ]
+            ]);
+        }
 
         return response()->json([
 
-            'success'=>true,
-
-            'data'=>[
-
-                'total_buku'=>$totalBuku,
-
-                'total_kategori'=>$totalKategori,
-
-                'total_customer'=>$totalCustomer,
-
-                'total_transaksi'=>$totalTransaksi,
-
-                'pendapatan'=>$pendapatan,
-
-                'stok_menipis'=>$stokMenipis,
-
-                'transaksi_terbaru'=>$transaksiTerbaru
-
-            ]
-
-        ]);
-
+            'message'=>'Role tidak tersedia'
+        ],403);
     }
-
 }
