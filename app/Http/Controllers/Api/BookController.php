@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Http\Resources\BookResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,9 +27,7 @@ class BookController extends Controller
         ->latest()
         ->get();
 
-        return response()->json([
-            'data' => $books
-        ]);
+        return BookResource::collection($books);
     }
 
     // Tambah buku
@@ -74,14 +73,13 @@ class BookController extends Controller
     // Detail admin
     public function show(Book $book)
     {
-        return response()->json([
-
-            'data'=>$book->load([
-                'category',
-                'author',
-                'publisher'
-            ])
-        ]);
+        return new BookResource(
+    $book->load([
+        'category',
+        'author',
+        'publisher'
+    ])
+);
     }
 
     // Update buku
@@ -180,10 +178,7 @@ class BookController extends Controller
         ->latest()
         ->get();
 
-        return response()->json([
-
-            'data'=>$books
-        ]);
+        return BookResource::collection($books);
     }
 
     // Detail buku customer
@@ -198,12 +193,12 @@ class BookController extends Controller
             ],404);
         }
 
-        return response()->json([
-            'data'=>$book->load([
-                'category',
-                'author',
-                'publisher'
-            ])
-        ]);
+        return new BookResource(
+    $book->load([
+        'category',
+        'author',
+        'publisher'
+    ])
+);
     }
 }

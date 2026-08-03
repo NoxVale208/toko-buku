@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Book;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderRequest;
@@ -23,10 +24,7 @@ class OrderController extends Controller
             ->paginate(10);
 
 
-        return response()->json([
-            'success'=>true,
-            'data'=>$orders
-        ]);
+        return OrderResource::collection($orders);
 
     }
 
@@ -106,11 +104,14 @@ class OrderController extends Controller
             ],403);
         }
 
-        return response()->json([
-            'success'=>true,
-            'data'=>$order->load(
-                'orderDetails.book'
-            )
-        ]);
+        return new OrderResource(
+
+    $order->load([
+        'user',
+        'orderDetails.book',
+        'payment'
+    ])
+
+);
     }
 }

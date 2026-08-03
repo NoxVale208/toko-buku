@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Sale;
 use Illuminate\Http\Request;
+use App\Http\Resources\SaleResource;
 use App\Http\Controllers\Controller;
 
 
@@ -51,64 +52,45 @@ class SaleController extends Controller
 
 
 
-        return response()->json([
-
-            'success'=>true,
-
-            'data'=>$sales
-
-        ]);
-
+        return SaleResource::collection($sales);
     }
-
-
-
-
 
     public function show(Sale $sale)
     {
 
 
-        return response()->json([
+        return new SaleResource(
 
-            'success'=>true,
-
-            'data'=>$sale->load([
-                'user',
-                'saleDetails.book'
-            ])
-
-        ]);
+    $sale->load([
+        'user',
+        'saleDetails.book',
+        'payment'
+    ])
+);
 
     }
 
+    public function mySales()
+{
+
+    $sales = Sale::with([
+
+        'saleDetails.book',
+
+        'payment'
+
+    ])
+    ->where(
+        'user_id',
+        auth()->id()
+    )
+    ->latest()
+    ->get();
 
 
 
+    return SaleResource::collection($sales);
 
-    public function mySales(Request $request)
-    {
-
-        $sales = Sale::with(
-            'saleDetails.book'
-        )
-        ->where(
-            'user_id',
-            $request->user()->id
-        )
-        ->latest()
-        ->paginate(10);
-
-
-
-        return response()->json([
-
-            'success'=>true,
-
-            'data'=>$sales
-
-        ]);
-
-    }
+}
 
 }
