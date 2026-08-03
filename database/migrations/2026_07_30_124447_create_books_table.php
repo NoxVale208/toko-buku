@@ -27,7 +27,7 @@ return new class extends Migration
             $table->unsignedInteger('minimal_stok')->default(5);
             $table->string('cover')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->enum('status', ['draft','published','nonaktif'])->default('draft');
             $table->timestamps();
 
         });

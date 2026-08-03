@@ -40,9 +40,9 @@ class User extends Authenticatable
         return $this->hasMany(Sale::class);
     }
 
-    public function orderDetails()
+    public function orders()
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(Order::class);
     }
 
     public function stockHistories()
@@ -53,6 +53,16 @@ class User extends Authenticatable
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function verifiedPayments()
+    {
+        return $this->hasMany(Payment::class, 'verifier_id');
     }
 }
 

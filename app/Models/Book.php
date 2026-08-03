@@ -62,4 +62,9 @@ class Book extends Model
     {
         return $this->hasMany(StockHistory::class);
     }
+
+    public function cartDetails()
+{
+    return $this->hasMany(CartDetail::class);
+}
 }
