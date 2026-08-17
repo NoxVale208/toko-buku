@@ -104,7 +104,17 @@ class CartController extends Controller
             'qty' => 'required|integer|min:1'
         ]);
 
-        $detail = CartDetail::findOrFail($id);
+        $user = Auth::user();
+
+        $detail = CartDetail::whereHas('cart', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->find($id);
+
+        if (!$detail) {
+            return response()->json([
+                'message' => 'Item keranjang tidak ditemukan'
+            ], 404);
+        }
 
         if ($detail->book->stok < $request->qty) {
             return response()->json([
@@ -126,7 +136,18 @@ class CartController extends Controller
      */
     public function remove($id)
     {
-        $detail = CartDetail::findOrFail($id);
+        $user = Auth::user();
+
+        $detail = CartDetail::whereHas('cart', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->find($id);
+
+        if (!$detail) {
+            return response()->json([
+                'message' => 'Item keranjang tidak ditemukan'
+            ], 404);
+        }
+
         $detail->delete();
 
         return response()->json([
