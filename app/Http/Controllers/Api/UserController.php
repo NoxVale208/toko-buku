@@ -18,10 +18,23 @@ class UserController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function index()
+    public function index(Request $request)
     {
 
-        $users = User::latest()->get();
+        $users = User::latest()
+            ->when($request->search, function($query) use($request){
+
+                $query->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+
+            })
+            ->when($request->role, function($query) use($request){
+
+                $query->where('role', $request->role);
+
+            })
+            ->paginate(10)
+            ->withQueryString();
 
 
         return UserResource::collection($users);

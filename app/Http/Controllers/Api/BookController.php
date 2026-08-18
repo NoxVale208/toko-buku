@@ -17,15 +17,45 @@ class BookController extends Controller
     */
 
     // Semua buku untuk admin
-    public function index()
+    public function index(Request $request)
     {
         $books = Book::with([
             'category',
             'author',
             'publisher'
         ])
+        ->when($request->search, function($query) use($request){
+
+            $query->where('judul', 'like', "%{$request->search}%")
+                ->orWhere('isbn', 'like', "%{$request->search}%")
+                ->orWhere('kode_buku', 'like', "%{$request->search}%");
+
+        })
+        ->when($request->category_id, function($query) use($request){
+
+            $query->where('category_id', $request->category_id);
+
+        })
+        ->when($request->status, function($query) use($request){
+
+            $query->where('status', $request->status);
+
+        })
+        ->when($request->stock_level, function($query) use($request){
+
+            if ($request->stock_level === 'out') {
+                $query->where('stok', '<=', 0);
+            } elseif ($request->stock_level === 'low') {
+                $query->where('stok', '>', 0)
+                    ->whereColumn('stok', '<=', 'minimal_stok');
+            } elseif ($request->stock_level === 'in') {
+                $query->whereColumn('stok', '>', 'minimal_stok');
+            }
+
+        })
         ->latest()
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
         return BookResource::collection($books);
     }

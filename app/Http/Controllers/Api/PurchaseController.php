@@ -20,11 +20,25 @@ class PurchaseController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function index()
+    public function index(Request $request)
     {
         $purchases = Purchase::with('distributor')
+            ->when($request->search, function($query) use($request){
+
+                $query->where('kode_pembelian', 'like', "%{$request->search}%")
+                    ->orWhereHas('distributor', function($q) use($request){
+                        $q->where('nama', 'like', "%{$request->search}%");
+                    });
+
+            })
+            ->when($request->distributor_id, function($query) use($request){
+
+                $query->where('distributor_id', $request->distributor_id);
+
+            })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return PurchaseResource::collection($purchases);
     }
