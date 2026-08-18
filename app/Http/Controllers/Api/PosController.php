@@ -111,9 +111,10 @@ StockHistory::create([
             Payment::create([
                 'sale_id'=>$sale->id,
                 'metode_pembayaran'=>'tunai',
+                'jumlah_bayar'=>$sale->grand_total,
                 'status'=>'verified',
                 'tanggal_bayar'=>now(),
-                'verifier_id'=>Auth::id()
+                'verified_by'=>Auth::id()
             ]);
 
             return response()->json([

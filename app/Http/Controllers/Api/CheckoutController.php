@@ -19,7 +19,7 @@ class CheckoutController extends Controller
     public function checkout(Request $request)
     {
         $request->validate([
-            'metode_pembayaran' => 'required|in:transfer',
+            'metode_pembayaran' => 'required|in:transfer,tunai',
             'catatan' => 'nullable|string'
         ]);
 
@@ -108,6 +108,7 @@ StockHistory::create([
             Payment::create([
                 'order_id'=>$order->id,
                 'metode_pembayaran'=>$request->metode_pembayaran,
+                'jumlah_bayar'=>$order->grand_total,
                 'status'=>'pending'
             ]);
 

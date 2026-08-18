@@ -16,10 +16,11 @@ class Payment extends Model
     'order_id',
     'sale_id',
     'metode_pembayaran',
+    'jumlah_bayar',
     'bukti_pembayaran',
     'status',
     'tanggal_bayar',
-    'verifier_id'
+    'verified_by'
 ];
 
     public function order()

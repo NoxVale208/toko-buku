@@ -35,7 +35,10 @@ class PaymentResource extends JsonResource
 
 
 
-            'metode'=>$this->metode,
+            'metode'=>$this->metode_pembayaran,
+
+
+            'jumlah_bayar'=>$this->jumlah_bayar,
 
 
             'status'=>$this->status,

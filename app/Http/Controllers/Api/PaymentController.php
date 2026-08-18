@@ -129,7 +129,7 @@ class PaymentController extends Controller
 
             'status'=>$request->status,
             'tanggal_bayar'=>now(),
-            'verifier_id'=>Auth::id()
+            'verified_by'=>Auth::id()
         ]);
 
         // jika pembayaran berhasil
