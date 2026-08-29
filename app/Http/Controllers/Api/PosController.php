@@ -24,7 +24,8 @@ class PosController extends Controller
             'customer_name'=>'nullable|string',
             'items'=>'required|array',
             'items.*.book_id'=>'required|exists:books,id',
-            'items.*.qty'=>'required|integer|min:1'
+            'items.*.qty'=>'required|integer|min:1',
+            'jumlah_bayar'=>'nullable|numeric|min:0'
         ]);
 
         return DB::transaction(function() use($request){
@@ -45,6 +46,12 @@ class PosController extends Controller
 
                 $subtotal += 
                     $book->harga_jual * $item['qty'];
+            }
+
+            if($request->filled('jumlah_bayar') && $request->jumlah_bayar < $subtotal){
+                return response()->json([
+                    'message'=>'Jumlah uang kurang dari total tagihan'
+                ],422);
             }
 
             // buat sale
@@ -107,11 +114,15 @@ StockHistory::create([
 ]);
             }
 
+            $jumlahBayar = $request->filled('jumlah_bayar')
+                ? $request->jumlah_bayar
+                : $sale->grand_total;
+
             // payment tunai
             Payment::create([
                 'sale_id'=>$sale->id,
                 'metode_pembayaran'=>'tunai',
-                'jumlah_bayar'=>$sale->grand_total,
+                'jumlah_bayar'=>$jumlahBayar,
                 'status'=>'verified',
                 'tanggal_bayar'=>now(),
                 'verified_by'=>Auth::id()
@@ -120,6 +131,7 @@ StockHistory::create([
             return response()->json([
 
                 'message'=>'Transaksi berhasil',
+                'kembalian'=>$jumlahBayar - $sale->grand_total,
                 'data'=>$sale->load(
                     'saleDetails.book',
                     'payment'

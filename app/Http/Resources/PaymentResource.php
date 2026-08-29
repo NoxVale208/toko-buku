@@ -19,7 +19,11 @@ class PaymentResource extends JsonResource
 
                 'id'=>$this->order?->id,
 
-                'kode_order'=>$this->order?->kode_order
+                'kode_order'=>$this->order?->kode_order,
+
+                'grand_total'=>$this->order?->grand_total,
+
+                'customer_name'=>$this->order?->user?->name
 
             ],
 
@@ -29,7 +33,11 @@ class PaymentResource extends JsonResource
 
                 'id'=>$this->sale?->id,
 
-                'kode_transaksi'=>$this->sale?->kode_transaksi
+                'kode_transaksi'=>$this->sale?->kode_transaksi,
+
+                'grand_total'=>$this->sale?->grand_total,
+
+                'customer_name'=>$this->sale?->customer_name
 
             ],
 

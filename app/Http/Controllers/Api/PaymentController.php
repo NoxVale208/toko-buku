@@ -115,7 +115,8 @@ class PaymentController extends Controller
 
         $request->validate([
 
-            'status'=>'required|in:verified,rejected'
+            'status'=>'required|in:verified,rejected',
+            'jumlah_bayar'=>'nullable|numeric|min:0'
         ]);
 
         $payment = Payment::with([
@@ -125,12 +126,45 @@ class PaymentController extends Controller
 
         ->findOrFail($id);
 
-        $payment->update([
+        $grandTotal = $payment->order->grand_total
+            ?? $payment->sale->grand_total
+            ?? 0;
 
+        $kembalian = null;
+
+        $updateData = [
             'status'=>$request->status,
             'tanggal_bayar'=>now(),
             'verified_by'=>Auth::id()
-        ]);
+        ];
+
+        if($request->status == 'verified'){
+
+            if($payment->metode_pembayaran == 'tunai'){
+
+                if(!$request->filled('jumlah_bayar')){
+                    return response()->json([
+                        'message'=>'Jumlah uang tunai wajib diisi'
+                    ],422);
+                }
+
+                if($request->jumlah_bayar < $grandTotal){
+                    return response()->json([
+                        'message'=>'Jumlah uang kurang dari total tagihan'
+                    ],422);
+                }
+
+                $updateData['jumlah_bayar'] = $request->jumlah_bayar;
+                $kembalian = $request->jumlah_bayar - $grandTotal;
+
+            } else {
+
+                // transfer: kasir mengonfirmasi bukti sesuai nominal tagihan
+                $updateData['jumlah_bayar'] = $grandTotal;
+            }
+        }
+
+        $payment->update($updateData);
 
         // jika pembayaran berhasil
         if(
@@ -145,6 +179,7 @@ class PaymentController extends Controller
         return response()->json([
 
             'message'=>'Status pembayaran diperbarui',
+            'kembalian'=>$kembalian,
             'data'=>new PaymentResource(
 
             $payment->load([

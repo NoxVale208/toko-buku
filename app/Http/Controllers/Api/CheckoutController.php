@@ -58,7 +58,7 @@ class CheckoutController extends Controller
                 'diskon'=>0,
                 'pajak'=>0,
                 'grand_total'=>$subtotal,
-                'status'=>'waiting_confirmation',
+                'status'=>'pending_payment',
                 'catatan'=>$request->catatan
             ]);
 
@@ -108,7 +108,7 @@ StockHistory::create([
             Payment::create([
                 'order_id'=>$order->id,
                 'metode_pembayaran'=>$request->metode_pembayaran,
-                'jumlah_bayar'=>$order->grand_total,
+                'jumlah_bayar'=>0,
                 'status'=>'pending'
             ]);
 

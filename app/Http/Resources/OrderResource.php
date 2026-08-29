@@ -109,7 +109,9 @@ class OrderResource extends JsonResource
 
                     return [
 
-                        'metode'=>$this->payment->metode,
+                        'metode'=>$this->payment->metode_pembayaran,
+
+                        'jumlah_bayar'=>$this->payment->jumlah_bayar,
 
                         'status'=>$this->payment->status,
 

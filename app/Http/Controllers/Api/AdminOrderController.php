@@ -15,20 +15,54 @@ class AdminOrderController extends Controller
 {
 
     // Melihat semua order customer
-    public function index()
+    public function index(Request $request)
     {
 
         $orders = Order::with([
             'user',
-            'orderDetails.book'
+            'orderDetails.book',
+            'payment'
         ])
+        ->when($request->search, function($query) use($request){
+
+            $query->where('kode_order', 'like', "%{$request->search}%")
+                ->orWhereHas('user', function($q) use($request){
+                    $q->where('name', 'like', "%{$request->search}%");
+                });
+
+        })
+        ->when($request->status, function($query) use($request){
+
+            $query->where('status', $request->status);
+
+        })
         ->latest()
-        ->paginate(10);
+        ->paginate(10)
+        ->withQueryString();
 
 
         return response()->json([
             'success'=>true,
             'data'=>$orders
+        ]);
+
+    }
+
+
+
+    // Melihat detail 1 order (untuk halaman detail admin)
+    public function show(Order $order)
+    {
+
+        $order->load([
+            'user',
+            'orderDetails.book',
+            'payment.verifier'
+        ]);
+
+        return response()->json([
+            'success'=>true,
+            'data'=>$order
         ]);
 
     }

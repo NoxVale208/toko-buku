@@ -147,6 +147,7 @@ Route::middleware(['auth:sanctum','role:admin,kasir'])->group(function(){
     Route::get('/orders-management',[AdminOrderController::class,'index']);
     Route::post('/orders/{order}/approve',[AdminOrderController::class,'approve']);
     Route::post('/orders/{order}/reject',[AdminOrderController::class,'reject']);
+    Route::get('/orders-management/{order}', [AdminOrderController::class, 'show']);
 
 
     // PURCHASE
